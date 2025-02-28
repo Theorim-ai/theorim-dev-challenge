@@ -25,6 +25,25 @@ exports.listPartitions = async function(){
     return res.Items;
 }
 
+/**
+ * Retrieves the latest partitions updated after the given timestamp.
+ * This function queries the database to fetch partitions where 
+ * the `lastUpdated` field is greater than the provided `lastExecutionTimestamp`.
+ * 
+ * @param {string} lastExecutionTimestamp - The timestamp of the last execution.
+ * @returns {Promise<Array>} - A promise that resolves to an array of partition items.
+ */
+
+exports.listPartitionsLast = async function(lastExecutionTimestamp){
+    const res = await this.db.query({
+        pk: '__partition',
+        filterExpression: 'lastUpdated > :lastExec',
+        expressionAttributeValues: { ':lastExec': lastExecutionTimestamp }
+    });
+    return res.Items;
+}
+
+
 exports.entitlements = function(groups){
     const userGroups = groups.map(g=>{ return g.split('-')[0]});
     const keys = Object.keys(Defs).filter(d=>{ return userGroups.includes(d) }).map(k=>{ return { name: Defs[k].name, title: Defs[k].title } });
