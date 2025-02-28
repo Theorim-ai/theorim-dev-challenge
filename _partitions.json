@@ -3,18 +3,18 @@
     "pk": "__partition",
     "sk": "prueba_paula_2",
     "title": "Prueba Paula 2",
-    "lastUpdated": null
+    "lastUpdated": "2024-02-28T12:30:00Z"
 },
 {
     "pk": "__partition",
     "sk": "prueba_paula_3",
     "title": "Prueba Paula 3",
-    "lastUpdated": null
+    "lastUpdated": "2024-02-28T14:15:00Z"
 },
 {
     "pk": "__partition",
     "sk": "admin_work",
     "title": "Admin Work",
-    "lastUpdated": null
+    "lastUpdated": "2024-02-27T18:45:00Z"
 }
 ]
