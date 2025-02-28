@@ -2,6 +2,7 @@ const Engine = require('./jschema-engine/$engine');
 const { DataModel, UserModel, HistoryModel, RolesModel, LogsModel } = require('./helpers/$model');
 
 const Partitions = {};
+let lastExecutionTimestamp = 0; // It will save the timestamp of the last execution
 
 function addDefaultDefs(){
     const adminDef = {
@@ -35,8 +36,18 @@ function defaultModelerDef(datasetName,title){
 async function pullDatasets(){
     const compileStart = performance.now();
     console.log('Refreshing Datasets');
-    const partitions = await Engine.listPartitions();
+
+    // Get only partitions updated since last run
+    const partitions = await Engine.listPartitionsLast(lastExecutionTimestamp); // <-- pass the timestamp
+    
+    //Validate
+    if (partitions.length === 0) {
+        console.log('No new partitions updated.');
+        return false;
+    }
+
     const proms = [];
+
     for (const p of partitions){
         Partitions[p.name] = JSON.parse(JSON.stringify(p))
         Engine.addDef(defaultModelerDef(p.name,p.title));
@@ -49,6 +60,9 @@ async function pullDatasets(){
         proms.push(prm)
     }
     await Promise.all(proms);
+    // We update the timestamp after processing everything
+    lastExecutionTimestamp = Date.now();
+
     console.log('Partitions Refreshed in',performance.now()-compileStart);
     return true;
 }
